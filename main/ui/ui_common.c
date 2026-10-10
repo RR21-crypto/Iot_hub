@@ -26,6 +26,62 @@ void ui_common_init(void)
     ui_perf_monitor_set(false);     // LVGL shows it by default when enabled in menuconfig
 }
 
+lv_obj_t *ui_digits_create(lv_obj_t *parent, const lv_font_t *font)
+{
+    lv_obj_t *box = lv_obj_create(parent);
+    lv_obj_set_size(box, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_opa(box, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(box, 0, 0);
+    lv_obj_set_style_pad_all(box, 0, 0);
+    lv_obj_set_style_pad_column(box, 0, 0);
+    lv_obj_set_style_text_font(box, font, 0);
+    lv_obj_set_flex_flow(box, LV_FLEX_FLOW_ROW);
+    lv_obj_remove_flag(box, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(box, LV_OBJ_FLAG_CLICKABLE);
+    return box;
+}
+
+static int32_t digit_width(const lv_font_t *font)
+{
+    int32_t w = 0;
+    for (char c = '0'; c <= '9'; c++) {
+        int32_t cw = lv_font_get_glyph_width(font, c, 0);
+        w = cw > w ? cw : w;
+    }
+    return w;
+}
+
+void ui_digits_set_text(lv_obj_t *digits, const char *text)
+{
+    const lv_font_t *font = lv_obj_get_style_text_font(digits, 0);
+    uint32_t len = lv_strlen(text);
+    int32_t dw = digit_width(font);
+
+    // Different number of characters (e.g. "--:--" -> "1:05:00"): rebuild the cells
+    if (lv_obj_get_child_count(digits) != len) {
+        lv_obj_clean(digits);
+        for (uint32_t i = 0; i < len; i++) {
+            lv_obj_t *cell = lv_label_create(digits);
+            lv_obj_set_style_text_align(cell, LV_TEXT_ALIGN_CENTER, 0);
+            lv_label_set_text(cell, "");
+        }
+    }
+    char ch[2] = { 0 };
+    for (uint32_t i = 0; i < len; i++) {
+        lv_obj_t *cell = lv_obj_get_child(digits, i);
+        ch[0] = text[i];
+        if (lv_strcmp(lv_label_get_text(cell), ch) == 0) {
+            continue;   // unchanged: nothing to redraw
+        }
+        bool digit = text[i] >= '0' && text[i] <= '9';
+        int32_t w = digit ? dw : lv_font_get_glyph_width(font, text[i], 0);
+        if (lv_obj_get_style_width(cell, 0) != w) {
+            lv_obj_set_width(cell, w);
+        }
+        lv_label_set_text(cell, ch);
+    }
+}
+
 void ui_perf_monitor_set(bool show)
 {
 #if LV_USE_PERF_MONITOR

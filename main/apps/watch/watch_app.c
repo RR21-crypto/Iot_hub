@@ -90,11 +90,13 @@ static void clock_update(void)
 {
     struct tm now;
     if (time_svc_now(&now)) {
-        lv_label_set_text_fmt(lbl_clock, "%02d:%02d:%02d", now.tm_hour, now.tm_min, now.tm_sec);
+        char buf[12];
+        snprintf(buf, sizeof(buf), "%02d:%02d:%02d", now.tm_hour, now.tm_min, now.tm_sec);
+        ui_digits_set_text(lbl_clock, buf);
         lv_label_set_text_fmt(lbl_date, "%s, %02d-%02d-%04d", day_names[now.tm_wday % 7],
                               now.tm_mday, now.tm_mon + 1, now.tm_year + 1900);
     } else {
-        lv_label_set_text(lbl_clock, "--:--:--");
+        ui_digits_set_text(lbl_clock, "--:--:--");
         lv_label_set_text(lbl_date, "RTC not available");
     }
 }
@@ -102,8 +104,7 @@ static void clock_update(void)
 static void clock_tab_create(lv_obj_t *tab)
 {
     lv_obj_set_flex_align(tab, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lbl_clock = lv_label_create(tab);
-    lv_obj_set_style_text_font(lbl_clock, &lv_font_montserrat_48, 0);
+    lbl_clock = ui_digits_create(tab, &lv_font_montserrat_48);
     lbl_date = lv_label_create(tab);
     lv_obj_set_style_text_color(lbl_date, lv_color_hex(UI_COLOR_TEXT_DIM), 0);
     clock_update();
@@ -166,8 +167,7 @@ static void sw_lap_clicked(lv_event_t *e)
 
 static void stopwatch_tab_create(lv_obj_t *tab)
 {
-    lbl_sw = lv_label_create(tab);
-    lv_obj_set_style_text_font(lbl_sw, &lv_font_montserrat_48, 0);
+    lbl_sw = ui_digits_create(tab, &lv_font_montserrat_48);
 
     lv_obj_t *row = row_create(tab);
     btn_sw_start = button_create(row, "", sw_start_clicked);
@@ -281,8 +281,7 @@ static void timer_tab_create(lv_obj_t *tab)
     roller_sec = roller_create(cd_picker, "sec");
     lv_roller_set_selected(roller_min, 5, LV_ANIM_OFF);
 
-    lbl_cd = lv_label_create(tab);
-    lv_obj_set_style_text_font(lbl_cd, &lv_font_montserrat_48, 0);
+    lbl_cd = ui_digits_create(tab, &lv_font_montserrat_48);
     lv_obj_set_style_pad_ver(lbl_cd, 40, 0);
 
     lv_obj_t *row = row_create(tab);
@@ -297,14 +296,14 @@ static void refresh(lv_timer_t *t)
 {
     char buf[16];
     format_duration(buf, sizeof(buf), sw_elapsed_us(), true);
-    lv_label_set_text(lbl_sw, buf);
+    ui_digits_set_text(lbl_sw, buf);
 
     if (tm_cd.running && cd_left_us() == 0) {
         cd_alert();
     }
     // Round up so the display shows 00:01 until the very end, never 00:00 while running
     format_duration(buf, sizeof(buf), cd_left_us() + 999999, false);
-    lv_label_set_text(lbl_cd, buf);
+    ui_digits_set_text(lbl_cd, buf);
 }
 
 static void watch_create(lv_obj_t *parent)

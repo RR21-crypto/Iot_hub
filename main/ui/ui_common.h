@@ -42,6 +42,17 @@ lv_obj_t *ui_app_screen_create(const char *title, ui_back_cb_t on_back, lv_obj_t
 lv_obj_t *ui_error_screen_create(const char *msg);
 
 /**
+ * @brief Text with fixed-width digits, for clocks and counters
+ *
+ * Montserrat digits have different widths ("1" is narrow, "0" is wide), so a normal label
+ * changes width and jumps around when the numbers change. This puts every character in its
+ * own cell; all digits get the width of the widest one. Only cells that change are redrawn.
+ */
+lv_obj_t *ui_digits_create(lv_obj_t *parent, const lv_font_t *font);
+
+void ui_digits_set_text(lv_obj_t *digits, const char *text);
+
+/**
  * @brief Show or hide LVGL's FPS / CPU overlay (bottom left). Hidden after ui_common_init().
  */
 void ui_perf_monitor_set(bool show);
