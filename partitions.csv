@@ -1,0 +1,11 @@
+# Name,   Type, SubType, Offset,   Size
+# 16MB flash layout with two firmware slots for OTA updates
+nvs,      data, nvs,     0x9000,   0x4000,
+otadata,  data, ota,     0xd000,   0x2000,
+phy_init, data, phy,     0xf000,   0x1000,
+ota_0,    app,  ota_0,   0x10000,  3M,
+ota_1,    app,  ota_1,   0x310000, 3M,
+# Photos/GIFs: built from data/gallery and written on every cable flash (not by OTA)
+gallery,  data, spiffs,  0x610000, 6M,
+# Notes and other user data: never overwritten by flashing (same place as before)
+user,     data, spiffs,  0xC10000, 0x3F0000,

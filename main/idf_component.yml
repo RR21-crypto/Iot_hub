@@ -1,0 +1,10 @@
+dependencies:
+  idf: ">=5.3"
+  # Board BSP lives in components/esp32_s3_touch_lcd_4 (Waveshare BSP 1.1.0 for
+  # board revision V3.0 with TCA9554, patched for ESP-IDF v6).
+  # V4.0 boards (CH32V003 helper chip) should use waveshare/esp32_s3_touch_lcd_4 "^3.0.0" instead.
+  lvgl/lvgl:
+    version: "^9.2"
+    public: true
+  # JSON parser for the Weather app (cJSON is no longer bundled with ESP-IDF v6)
+  espressif/cjson: "^1.7"

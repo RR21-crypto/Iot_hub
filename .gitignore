@@ -1,0 +1,17 @@
+# Build output and downloaded components (recreated by idf.py build)
+build/
+managed_components/
+sdkconfig.old
+
+# Editor / machine-specific settings
+.vscode/
+.claude/
+CLAUDE.md
+__pycache__/
+
+# Personal pictures: put your own photos/GIFs in data/gallery (see data/gallery/README.md)
+data/gallery/*
+!data/gallery/README.md
+main/anna.rgb565
+tools/anna_source.webp
+tools/anna.rgb565.preview.png
