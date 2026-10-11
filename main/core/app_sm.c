@@ -10,6 +10,7 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "bsp/esp-bsp.h"
+#include "main.h"
 #include "services/bt_svc.h"
 #include "services/ota_svc.h"
 #include "services/time_svc.h"
@@ -23,7 +24,6 @@
 static const char *TAG = "app_sm";
 
 #define APP_SM_QUEUE_LEN        16
-#define APP_SM_TASK_STACK       6144
 #define APP_SM_TASK_PRIO        4
 #define APP_SM_TICK_PERIOD_US   (1000 * 1000)
 
@@ -119,7 +119,7 @@ static bool open_app(const app_msg_t *msg)
     active_app = app;
     app->create(content);
     lv_screen_load(active_screen);
-    ESP_LOGI(TAG, "opened app '%s'", app->name);
+    ESP_LOGI(TAG, "opened app '%s' (stack left: %u bytes)", app->name, (unsigned)uxTaskGetStackHighWaterMark(NULL));
     return true;
 }
 

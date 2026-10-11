@@ -8,6 +8,7 @@
 #include "esp_log.h"
 #include "bsp/esp-bsp.h"
 #include "pcf85063.h"
+#include "main.h"
 #include "core/app_sm.h"
 #include "services/ota_svc.h"
 #include "services/storage.h"
@@ -37,7 +38,11 @@ void app_main(void)
     time_svc_init(rtc);
 
     // 3. Display + touch
-    if (bsp_display_start() == NULL) {
+    bsp_display_cfg_t disp_cfg = {
+        .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
+    };
+    disp_cfg.lvgl_port_cfg.task_stack = LVGL_TASK_STACK;
+    if (bsp_display_start_with_config(&disp_cfg) == NULL) {
         ESP_LOGE(TAG, "Display init failed - check board revision (this BSP is for V3.0)");
         return;
     }

@@ -13,5 +13,10 @@
 #define WEATHER_DEFAULT_LATITUDE    -6.2088f
 #define WEATHER_DEFAULT_LONGITUDE   106.8456f
 
+// Task stacks (bytes). App screens are built in the state machine task and app timers run in the
+// LVGL task, so both need room for LVGL plus printf with floats. Check the "stack left" log lines.
+#define APP_SM_TASK_STACK   12288
+#define LVGL_TASK_STACK     12288
+
 #define I2C_MAX_DEVICES     8                       // most devices listed in Settings
 #define I2C_TEXT_LEN        (I2C_MAX_DEVICES * 32)  // buffer for the formatted device list
